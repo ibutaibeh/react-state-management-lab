@@ -87,56 +87,71 @@ const zombieFighters= [
   },
 ];
 
-
-
-
-
 const App = () => {
-const [myTeam,setMyTeam]= useState(team);
-const [gold,setGold]= useState(money);
-const [zombieStore,setZombieStore]= useState(zombieFighters);
+
+const [myTeam, setMyTeam]= useState([])
+const [availableZombies, setavailableZombies]= useState(zombieFighters)
+const money = myTeam.reduce((acc,curr)=>{return acc-curr.price},100)
+const strength= myTeam.reduce((sum,curr)=>{return sum+curr.strength},0)
+const agility= myTeam.reduce((sum,curr)=>{return sum+curr.agility},0)
 
 
+const handleAddFighter =(fighter)=>{
+  if(money>=fighter.price){
+setMyTeam([...myTeam,fighter])
+setavailableZombies(availableZombies.filter((zombie)=>(zombie.id!==fighter.id)))
+  }else{
+    return console.log('not enough money')
+  }
 
 
+  }
+const handleRemoveFighter =(fighter)=>{
+setavailableZombies([...availableZombies,fighter])
+setMyTeam(myTeam.filter((zombie)=>(zombie.id!==fighter.id)))
+
+  }
   return (
+
     <>
     <h1>Zombie Fighters</h1>
-    <h2>Money: {money}</h2>
-<div>
+    <h3>Money:{money}</h3>
+    <h3>Team Strength:{strength}</h3>
+    <h3>Team Agility:{agility}</h3>
     <h2>My Team</h2>
     <ul>
-{team.map((t,id)=>(
-  
-    <li key={id}>
-          <img src={t.img} alt="zombie img" />
-          <h3>{t.name}</h3>
-          <p>Price: {t.price}</p>
-          <p>Strength: {t.strength}</p>
-          <p>Agility: {t.agility}</p>
-    </li>
+      {myTeam.length===0 ? <p>Pick some team members!</p> :
+myTeam.map((z,id)=>(
+  <li key={z.id}>
+          <img src={z.img} alt="zombie img" />
+          <h3>{z.name}</h3>
+          <p>Price: {z.price}</p>
+          <p>Strength: {z.strength}</p>
+          <p>Agility: {z.agility}</p>
+          <button onClick={()=>handleRemoveFighter(z)}>remove</button> 
+  </li>)) }
 
+
+    </ul>
+    
+    <h2>Fighters</h2>
+    <ul>
+{availableZombies.map((z,id)=>(
+  <li key={z.id}>
+          <img src={z.img} alt="zombie img" />
+          <h3>{z.name}</h3>
+          <p>Price: {z.price}</p>
+          <p>Strength: {z.strength}</p>
+          <p>Agility: {z.agility}</p>
+          <button onClick={()=>handleAddFighter(z)}>Add</button>
+  </li>
 ))}
-  </ul>
-</div>
-<div>
-<h2>Add from these list</h2>
-<ul>
-    {zombieFighters.map((zombieFighter,id)=>(
-       
-        <li key={id}>
-          <img src={zombieFighter.img} alt="zombie img" />
-          <h3>{zombieFighter.name}</h3>
-          <p>Price: {zombieFighter.price}</p>
-          <p>Strength: {zombieFighter.strength}</p>
-          <p>Agility: {zombieFighter.agility}</p>
-          <button onClick={handleAddFighter}>Add</button>
-      </li>   
-    ))}
- </ul>
-</div>
+
+    </ul>
+    
     </>
-  );
+  )
+
 }
 
 export default App
